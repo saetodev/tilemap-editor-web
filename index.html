@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>TILE MAP EDITOR</title>
+</head>
+
+<body>
+    <script src="eventbus.js"></script>
+
+    <script>
+        function addTileFunc() {
+
+        }
+
+        function removeTileFunc() {
+
+        }
+
+        // set up events
+
+        addEvent("add-tile")
+        addEvent("remove-tile")
+
+        addListener("add-tile", addTileFunc)
+        addListener("remove-tile", removeTileFunc)
+
+        // tilemap stuff
+        const TILE_SIZE = 32
+
+        const tiles = new Set()
+
+        // input stuff
+        let mouseX = 0
+        let mouseY = 0
+
+        let tilePlaceAction = false
+
+        // set up canvas
+        const canvas = document.createElement("canvas")
+
+        canvas.width = 640
+        canvas.height = 480
+
+        canvas.addEventListener("mousemove", (e) => {
+            const canvasRect = canvas.getBoundingClientRect()
+
+            mouseX = e.clientX - canvasRect.x
+            mouseY = e.clientY - canvasRect.y
+        })
+
+        canvas.addEventListener("click", (e) => {
+            const tx = Math.floor(mouseX / TILE_SIZE)
+            const ty = Math.floor(mouseY / TILE_SIZE)
+
+            tiles.add(`${tx},${ty}`)
+        })
+
+        document.body.append(canvas)
+
+        // context and drawing
+
+        const context = canvas.getContext("2d")
+
+        function update() {
+
+            // render
+
+            context.fillStyle = "lightgray"
+            context.fillRect(0, 0, canvas.width, canvas.height)
+
+            for (const pos of tiles) {
+                parts = pos.split(",")
+
+                x = parseInt(parts[0])
+                y = parseInt(parts[1])
+
+                rx = x * TILE_SIZE
+                ry = y * TILE_SIZE
+                rw = TILE_SIZE
+                rh = TILE_SIZE
+
+                context.fillStyle = "black"
+                context.fillRect(rx, ry, rw, rh)
+            }
+
+            requestAnimationFrame(update)
+        }
+
+        requestAnimationFrame(update)
+    </script>
+</body>
+
+</html>
