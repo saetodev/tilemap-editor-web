@@ -7,34 +7,23 @@
 
 <body>
     <script src="eventbus.js"></script>
+    <script src="tilemap.js"></script>
 
     <script>
-        function addTileFunc() {
-
-        }
-
-        function removeTileFunc() {
-
-        }
-
         // set up events
 
         addEvent("add-tile")
-        addEvent("remove-tile")
+        addEvent("render-tilemap")
 
-        addListener("add-tile", addTileFunc)
-        addListener("remove-tile", removeTileFunc)
+        addListener("add-tile", addTile)
+        addListener("render-tilemap", renderTileMap)
 
         // tilemap stuff
         const TILE_SIZE = 32
 
-        const tiles = new Set()
-
         // input stuff
         let mouseX = 0
         let mouseY = 0
-
-        let tilePlaceAction = false
 
         // set up canvas
         const canvas = document.createElement("canvas")
@@ -53,7 +42,7 @@
             const tx = Math.floor(mouseX / TILE_SIZE)
             const ty = Math.floor(mouseY / TILE_SIZE)
 
-            tiles.add(`${tx},${ty}`)
+            pushEvent("add-tile", tx, ty)
         })
 
         document.body.append(canvas)
@@ -69,20 +58,7 @@
             context.fillStyle = "lightgray"
             context.fillRect(0, 0, canvas.width, canvas.height)
 
-            for (const pos of tiles) {
-                parts = pos.split(",")
-
-                x = parseInt(parts[0])
-                y = parseInt(parts[1])
-
-                rx = x * TILE_SIZE
-                ry = y * TILE_SIZE
-                rw = TILE_SIZE
-                rh = TILE_SIZE
-
-                context.fillStyle = "black"
-                context.fillRect(rx, ry, rw, rh)
-            }
+            pushEvent("render-tilemap", context) 
 
             requestAnimationFrame(update)
         }
